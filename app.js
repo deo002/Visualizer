@@ -38,6 +38,14 @@ app.get("/signup",function(req,res){
   res.render("register");
 });
 
+app.get("/about",function(req,res){
+  res.render("about");
+});
+
+app.get("*",function(req,res){
+  res.render("error");
+});
+
 app.listen(process.env.PORT || 3000, function() {
   console.log("listening on http://localhost:3000/");
 });
