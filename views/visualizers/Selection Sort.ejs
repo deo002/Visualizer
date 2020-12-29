@@ -1,50 +1,52 @@
-<%- include ('../partials/header') %>
-<section>
+<%- include ('./show_partials/header') %>
+<section style="margin-top:12px;">
+     <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+          <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Array[1,2,3]" aria-label="Search">
+            <button class="btn btn-outline-success mx-2" type="submit">Search</button>
+            <button class="btn btn-success mx-2">Start</button>
+            <button class="btn btn-danger mx-2">Stop</button>
+          </form>
+        </div>
+    </nav>
+    <canvas></canvas>
 </section>
 <div class="container">
 <h4 id="list-item-5">Review</h4>
         <p>   
             <div>
-                <% if(course.comments.length === 0) { %>
+                <% if(algo.comments.length === 0) { %>
                   <small class="text-muted">No Reviews</small>
                 <% } else { %>
                   <% var stars = ['<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>'] %>
-                  <% for(var i = 0; i < Math.round(course.rateAvg); i++) { %>
+                  <% for(var i = 0; i < Math.round(algo.rateAvg); i++) { %>
                       <% stars[i] = '<small><i class="fas fa-star text-danger"></i></small>' %>
                   <% } %>
                   <% for(var i = 0; i < stars.length; i++) { %>
                     <%- stars[i] %>
                   <% } %>
-                  <% if (course.comments.length === 1) { %>
-                    <small class="text-muted"><%= course.comments.length %> Review</small>
+                  <% if (algo.comments.length === 1) { %>
+                    <small class="text-muted"><%= algo.comments.length %> Review</small>
                   <% } else { %>
-                    <small class="text-muted"><%= course.comments.length %> Reviews</small>
+                    <small class="text-muted"><%= algo.comments.length %> Reviews</small>
                   <% } %>
                 <% } %>
              </div>
              <div class="card shadow-sm mt-4" id="comments">
             <ul class="list-group list-group-flush">
-              <% if(1==1) { %>
                 <li id="commentItem" class="list-group-item list-group-item-light">
-                  Your course has
-                  <% if (course.comments.length === 0) { %>
+                  This Visualizer has
+                  <% if (algo.comments.length === 0) { %>
                     no reviews.
-                    <% } else if (course.comments.length === 1) { %>
+                    <% } else if (algo.comments.length === 1) { %>
                       1 review
                       <% } else { %>
-                        <%= course.comments.length %> reviews
+                        <%= algo.comments.length %> reviews
                           <% } %>
+                  <button class="btn btn-danger float-right">Leave a Review</button>
                 </li>
-                <% } else { %>
-                  <li id="commentItem" class="list-group-item list-group-item-light">
-                    <button class="btn btn-danger float-right" data-toggle="collapse" data-target="#collapseComment" aria-expanded="false" aria-controls="collapseComment">Leave a Review</button>
-                  </li>
-                  <% } %>
-                    <div class="collapse" id="collapseComment">
-                      <div class="card-body">
-                      </div>
-                    </div>
-                    <% course.comments.forEach(function(comment){ %>
+                    <% algo.comments.forEach(function(comment){ %>
                       <li class="list-group-item">
                         <p>
                           <i class="fas fa-user"></i>
@@ -65,12 +67,12 @@
                         <span class="text-muted">
                   <%- comment.text %>
                 </span>
-                        <% if(1==1) { %>
+                        <% if(currentUser && comment.author.id.equals(currentUser._id)) { %>
                           <div class="float-right">
                             <a class="btn text-dark" data-toggle="collapse" data-target="#editComment" aria-expanded="false" aria-controls="editComment">
                       <i class="fas fa-pencil-alt"></i>
                     </a>
-                            <form id="deleteForm2" action="/courses/<%= course._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST" class="float-right">
+                            <form id="deleteForm2" action="/Visualizers/<%= algo._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST" class="float-right">
                               <button class="delBtn btn text-dark">
                         <i class="fas fa-trash-alt"></i>
                       </button>
@@ -78,7 +80,7 @@
                           </div>
                           <div class="collapse" id="editComment">
                             <div class="card-body">
-                              <form class="needs-validation" action="/courses/<%= course._id %>/comments/<%= comment._id %>?_method=PUT" method="POST" novalidate>
+                              <form class="needs-validation" action="/Visualizers/<%= algo._id %>/comments/<%= comment._id %>?_method=PUT" method="POST" novalidate>
                                 <div class="form-group">
                                   <textarea class="form-control" id="exampleFormControlTextarea1" name="comment[text]" rows="3" required><%= comment.text %></textarea>
                                   <div class="invalid-feedback">
@@ -114,7 +116,7 @@
                       <% }) %>
             </ul>
           </div>
-                        <form class="needs-validation" action="/courses/<%= course._id %>/comments" method="POST" novalidate>
+                        <form class="needs-validation" action="/Visualizers/<%= algo.name %>/comments" method="POST" novalidate>
                           <div class="form-group">
                             <textarea class="form-control" id="exampleFormControlTextarea1" name="comment[text]" rows="3" required></textarea>
                             <div class="invalid-feedback">
@@ -153,5 +155,5 @@
         </p>
       </div>
 </div>
-<%- include ('../partials/footer') %>
-
+<script src="../assets/js/BubbleSort.js"></script>
+<%- include ('./show_partials/footer') %>

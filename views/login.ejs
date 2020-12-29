@@ -1,20 +1,20 @@
 <%- include ('./partials/header') %>
   <div class="wrap-login100">
-				<form class="login100-form">
+				<form class="login100-form needs-validation" action="/login" method="POST" novalidate>
 					<span class="login100-form-title pb-4">
 						Login to continue
 					</span>
 					
 					
 					<div class="wrap-input100 ">
-						<input class="input100" type="text" name="email">
+						<input class="input100" type="text" name="username">
 						<span class="focus-input100"></span>
 						<span class="label-input100">Email</span>
 					</div>
 					
 					
 					<div class="wrap-input100 validate-input">
-						<input class="input100" type="password" name="pass">
+						<input class="input100" type="password" name="password">
 						<span class="focus-input100"></span>
 						<span class="label-input100">Password</span>
 					</div>
