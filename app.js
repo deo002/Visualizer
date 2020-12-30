@@ -5,7 +5,8 @@ var express = require("express"),
   methodOverride = require("method-override"),
   passport = require("passport"),
   LocalStrategy = require("passport-local"),
-  passportLocalMongoose = require("passport-local-mongoose");
+  passportLocalMongoose = require("passport-local-mongoose"),
+  flash = require("connect-flash");
 
 mongoose.connect('mongodb+srv://Akash:iqNNO4NtnUOtKXHv@cluster0.iyuwe.mongodb.net/Visualizers?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -14,7 +15,7 @@ app.set("view engine", "ejs");
 app.locals.moment = require("moment");
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
-
+app.use(flash());
 
 //scahema setup
 var userSchema = new mongoose.Schema({
@@ -85,8 +86,37 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req, res, next) {
   res.locals.currentUser = req.user;
+  res.locals.error = req.flash("error");
+  res.locals.success = req.flash("success");
   next();
 });
+
+function checkCommentOwnership(req, res, next) {
+  Comment.findById(req.params.comment_id, function(err, foundComment) {
+    if (err || !foundComment) {
+      req.flash("error", "Sorry, that comment does not exist!");
+      res.redirect("/courses");
+    } else if (
+      foundComment.author.id.equals(req.user._id) ||
+      req.user.isAdmin
+    ) {
+      req.comment = foundComment;
+      next();
+    } else {
+      req.flash("error", "You don't have permission to do that!");
+      res.redirect("/Visualizers/" + req.params.name);
+    }
+  });
+};
+
+function isLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  req.flash("error", "You need to be logged in to do that!");
+  res.redirect("/login");
+};
+
 
 app.get("/", function(req, res) {
   res.render("landing");
@@ -108,7 +138,7 @@ app.get("/Visualizers/:name",function(req,res){
    });
 });
 //Login Routes
-app.get("/login",function(req,res){
+app.get("/login",function(req,res){ 
   res.render("login");
 });
 
@@ -116,14 +146,21 @@ app.post(
   "/login",
   passport.authenticate("local", {
     successRedirect: "/Visualizers",
-    failureRedirect: "/login"
+    failureRedirect: "/login",
+    failureFlash: true
   }),
-  function(req, res) {}
+  function(req, res) {
+  if(err)
+  {req.flash("err",err);}
+  else
+  {req.flash("success", "Logged Out Successfully!");}
+  }
 );
 
 // logout route
 app.get("/logout", function(req, res) {
   req.logout();
+  req.flash("success", "Loggged Out Successfully!");
   res.redirect("/Visualizers");
 });
 
@@ -145,14 +182,15 @@ app.post("/signup",function(req, res) {
           error: err.message
         });
       }
-      passport.authenticate("local")(req, res, function() {
+        passport.authenticate("local")(req, res, function() { 
+        req.flash("success", "Signup Successfully!");
         res.redirect("/Visualizers");
       });
     });
 });
 
 //comment Create route
-app.post("/Visualizers/:name/comments", function(req, res) {
+app.post("/Visualizers/:name/comments",isLoggedIn,function(req, res) {
   Algorithm.find( { name: req.params.name },function(err,found){
     if (err) {
       console.log(err);
@@ -164,7 +202,7 @@ app.post("/Visualizers/:name/comments", function(req, res) {
     if (ratedArray.includes(String(req.user._id))) {
       console.log(
         "error",
-        "You've already reviewed this campgroud, please edit your review instead."
+        "You've already reviewed this, please edit your review instead."
       );
       res.redirect("/Visualizers/" + req.params.name);
     } else {
@@ -176,7 +214,7 @@ app.post("/Visualizers/:name/comments", function(req, res) {
           var newComment = req.body.comment;
           Comment.create(newComment, function(err, comment) {
             if (err) {
-              console.log("error", "Something went wrong.");
+              req.flash("error", "Something went wrong.");
 
             } else {
               // add username and id to comment
@@ -210,7 +248,7 @@ app.post("/Visualizers/:name/comments", function(req, res) {
 });
 
 // DESTROY COMMENT ROUTE
-app.delete("/Visualizers/:id/comments/:comment_id", function(
+app.delete("/Visualizers/:id/comments/:comment_id",checkCommentOwnership,isLoggedIn,function(
   req,
   res
 ) {
@@ -236,7 +274,6 @@ app.delete("/Visualizers/:id/comments/:comment_id", function(
           }
         }
       );
-      console.log("success", "Review deleted!");
       Algorithm.findById(req.params.id,function(err, found) {
       if (err || !found) {
         console.log(err);
@@ -248,7 +285,7 @@ app.delete("/Visualizers/:id/comments/:comment_id", function(
 });
 
 // COMMENT UPDATE ROUTE
-app.put("/Visualizers/:id/comments/:comment_id",function(
+app.put("/Visualizers/:id/comments/:comment_id",checkCommentOwnership,isLoggedIn,function(
   req,
   res
 ) {
