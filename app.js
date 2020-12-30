@@ -59,7 +59,7 @@ var algoSchema = new mongoose.Schema({
     }]
  });
 
-
+var Algorithm = mongoose.model("Algorithm",algoSchema);
 
 // PASSPORT CONFIG
 app.use(
