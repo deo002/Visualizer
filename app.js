@@ -60,16 +60,6 @@ var algoSchema = new mongoose.Schema({
  });
 
 var Algorithm = mongoose.model("Algorithm",algoSchema);
-var tempalgos = [{name: "Bubble Sort"},{name: "Selection Sort"},{name: "Linked List"},{name: "Stack"},{name: "Queue"},{name: "Double Linked List"},{name: "Deque"}];
-tempalgos.forEach(item =>{
-Algorithm.create(item,function(err,algorithm){
-  if(err)
-   {res.render("error");}
-  else
-   {
-   }
-});
-})
 
 // PASSPORT CONFIG
 app.use(
