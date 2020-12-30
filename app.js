@@ -225,8 +225,8 @@ app.post("/Visualizers/:name/comments",isLoggedIn,function(req, res) {
               } else {
               var ratings = ratingsArray.reduce(function(total, rating) {
               return total + rating;
-              });
               foundAlgo[0].rateAvg = ratings / foundAlgo[0].comments.length;
+              });
               foundAlgo[0].rateCount = foundAlgo[0].comments.length;
               }
               foundAlgo[0].save();
