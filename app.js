@@ -59,15 +59,7 @@ var algoSchema = new mongoose.Schema({
     }]
  });
 
-var Algorithm = mongoose.model("Algorithm",algoSchema);
 
-/*Algorithm.create({name: "Selection Sort"},function(err,algorithm){
-  if(err)
-   {res.render("error");}
-  else
-   {
-   }
-});*/
 
 // PASSPORT CONFIG
 app.use(
