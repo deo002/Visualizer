@@ -61,6 +61,17 @@ var algoSchema = new mongoose.Schema({
 
 var Algorithm = mongoose.model("Algorithm",algoSchema);
 
+/*var arr = [{name:"Selection Sort"}];
+
+arr.forEach(function(item){
+  Algorithm.create(item,{ unique: true },function(err,algo){
+  if(err){
+  console.log(err);}
+  else
+  {console.log(algo);}
+});
+});*/
+
 // PASSPORT CONFIG
 app.use(
   require("express-session")({
@@ -309,6 +320,6 @@ app.get("*",function(req,res){
 
 const http =  require('http').createServer(app)
 
-http.listen(process.env.PORT || 3000, function() {
-  console.log("listening on http://localhost:3000/");
+http.listen(process.env.PORT || 3300, function() {
+  console.log("listening on http://localhost:3300/");
 });
