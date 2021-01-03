@@ -25,10 +25,12 @@ class Bar { //class defined to construct bars representing numbers
 
     draw() {
         c.fillStyle = 'pink';
+        //sets the size of the rectangle
         c.fillRect(this.x, this.y, WIDTH, this.height);
 
         c.fillStyle = "black";
 
+        //for value in rectangle
         c.fillText((-this.height) / 10, this.x + 11, this.y - 10);
         c.font = '20px Calibri';
 
@@ -163,11 +165,13 @@ const mergeSortHelper = (leftIndex, rightIndex) => {
 
 const mergeSort = () => {
 
+    //for making the rectangle
     for (let i = 0; i < inputArray.length; ++i) {
         animationArray[i] = new Bar(-inputArray[i] * 10, STARTX + 50 * i, STARTY);
         animationArray[i].draw();
     }
 
+    //merge sort
     mergeSortHelper(0, inputArray.length - 1);
 }
 
