@@ -1,93 +1,157 @@
 const canvas = document.querySelector('canvas');
-const WIDTH = 40, STARTX = 500, STARTY = 600, thickness = 1;
+const c = canvas.getContext('2d');
+
+let finalDestinationFirstBar = null, finalDestinationSecondBar = null;
+let firstBar = null, secondBar = null, timeAtWhichAnimationStarts = 0;
+
+const WIDTH = 40, STARTX = 500, STARTY = 600;
+const colorDuringSwappingAndSearching = '#9f5f80', initialColor = '#ff8e71', finalColor = '#ffba93';
+
+const animationArray = [];
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const c = canvas.getContext('2d');
-
-window.addEventListener('resize', (event) => {
+// event listener to resize the canvas as soon as window is resized
+window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
 });
 
+// class defined to construct bars representing numbers
 class Bar {
-    constructor(height, x, y) {
+    constructor(height, x, y, color) {
         this.height = height;
         this.x = x;
         this.y = y;
+        this.color = color;
     }
 
+    // draws the bar, text and shadow effects
     draw() {
-        c.fillStyle = 'pink';
-        c.fillRect(this.x, this.y, WIDTH, this.height); 
-        
+        c.fillStyle = this.color;
+        c.fillRect(this.x, this.y, WIDTH, this.height);
+
         c.fillStyle = "black";
-        
-        c.fillText((-this.height)/10, this.x + 11 , this.y - 10 ,);
+        if ((-this.height) / 10 <= 2) {
+            c.fillText((-this.height) / 10, this.x + 11, this.y + this.height - 10);
+        }
+        else {
+            c.fillText((-this.height) / 10, this.x + 11, this.y - 10);
+        }
         c.font = '20px Calibri';
-        
+
+        c.shadowBlur = 10;
+        c.shadowColor = "black";
+
     }
 
-    drawBorder()
-    {
-        c.fillStyle='#000';
-        c.fillRect(this.x - (thickness) - 2 , this.y - (thickness) + 3, WIDTH + (thickness * 2) + 4, this.height + (thickness * 2) - 7);
+    //draws border on the bars that are being swapped
+    drawBorder() {
+        c.lineWidth = 2;
+        c.strokeStyle = '#000';
+        c.strokeRect(this.x, this.y, WIDTH, this.height);
     }
 }
 
-let finalDestinationI = null, finalDestinationIndex = null, iI = null, iIndex = null, time = 0;
-const animationArray = [];
-
+// animation of swapping bars is produced by this function
 function animate() {
     let request = requestAnimationFrame(animate);
     c.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (animationArray[iI].x < finalDestinationI || animationArray[iIndex].x > finalDestinationIndex) {
-        if (animationArray[iI].x < finalDestinationI) {
-            animationArray[iI].x += 1;
+    // changing x-coordinates of first bar until it reaches the position occupied by second bar
+    // and vice-versa for second bar
+    if (animationArray[firstBar].x < finalDestinationFirstBar || animationArray[secondBar].x > finalDestinationSecondBar) {
+        if (animationArray[firstBar].x < finalDestinationFirstBar) {
+            animationArray[firstBar].x += 1;
         }
-        if (animationArray[iIndex].x > finalDestinationIndex) {
-            animationArray[iIndex].x -= 1;
+        if (animationArray[secondBar].x > finalDestinationSecondBar) {
+            animationArray[secondBar].x -= 1;
         }
-        animationArray[iI].drawBorder();
-        animationArray[iIndex].drawBorder();
     }
     else {
         cancelAnimationFrame(request);
     }
-    //console.log(animationArray[iI].x, finalDestinationI);
-    for (let k = 0; k < animationArray.length; ++k)
-        animationArray[k].draw();
+
+    for (let i = 0; i < animationArray.length; ++i) {
+        if (i !== firstBar && i !== secondBar) {
+            animationArray[i].draw();
+        }
+    }
+
+    // drawing the two bars being swapped after the others so that they appear over them
+    animationArray[firstBar].draw();
+    animationArray[firstBar].drawBorder();
+    animationArray[secondBar].draw();
+    animationArray[secondBar].drawBorder();
 }
 
-function delay(i, index) {
-    setTimeout(async function animateInLoop() {
-        finalDestinationI = animationArray[index].x;
-        finalDestinationIndex = animationArray[i].x;
-        iI = i;
-        iIndex = index;
-        //console.log(iI, iIndex, finalDestinationI, finalDestinationIndex);
+
+//executing animations after a time delay so that they do not overlap
+
+// animation of swapping bars
+function delaySwappingAnimation(i, index) {
+
+    setTimeout(function animateInLoop() {
+
+        firstBar = i;
+        secondBar = index;
+        finalDestinationFirstBar = animationArray[secondBar].x;
+        finalDestinationSecondBar = animationArray[firstBar].x;
+        animationArray[firstBar].color = colorDuringSwappingAndSearching;
+        animationArray[secondBar].color = colorDuringSwappingAndSearching;
         animate();
+
+        // swapping the bars in animationArray after animation is complete.
+        // we swap bars using indices, so if we swap elements of animationArray 
+        // before the animation is complete, we wont get the desired animation
         setTimeout(() => {
-            //console.log(animationArray);
-            const temp = animationArray[i];
-            animationArray[i] = animationArray[index];
-            animationArray[index] = temp;
-            //console.log(animationArray);
-        }, Math.abs(iI - iIndex) * 1000);
-    }, time, i, index);
+            [animationArray[i], animationArray[index]] = [animationArray[index], animationArray[i]];
+            animationArray[firstBar].color = finalColor;
+            if (firstBar !== secondBar)
+                animationArray[secondBar].color = initialColor;
+        }, Math.abs(firstBar - secondBar) * 1000);
+
+    }, timeAtWhichAnimationStarts, i, index);
 }
 
+// animation of searching the shortest bar
+function delaySearchingForShortestBar(mainBar, searchBar) {
+    setTimeout(() => {
+        c.clearRect(0, 0, canvas.width, canvas.height);
+        animationArray[mainBar].color = colorDuringSwappingAndSearching;
+        animationArray[searchBar].color = colorDuringSwappingAndSearching;
+        for (let bar of animationArray)
+            bar.draw();
+        setTimeout(() => {
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < animationArray.length; ++i) {
+                if (i > mainBar)
+                    animationArray[i].color = initialColor;
+                animationArray[i].draw();
+            }
+        }, 400);
+    }, timeAtWhichAnimationStarts);
+}
+
+//colors the bars to be swapped before swapping for 500 milliseconds
+function delayColoringTheBarsToBeSwapped(mainBar, searchBar) {
+    setTimeout(() => {
+        c.clearRect(0, 0, canvas.width, canvas.height);
+        animationArray[searchBar].color = colorDuringSwappingAndSearching;
+        for (let bar of animationArray)
+            bar.draw();
+    }, timeAtWhichAnimationStarts);
+}
+
+// selection sort algorithm
 const selectionSort = async (inputArray) => {
 
     for (let i = 0; i < inputArray.length; ++i) {
-        animationArray[i] = new Bar(-inputArray[i] * 10, STARTX + 50 * i, STARTY);
-        //console.log(animationArray[i]);
+        animationArray[i] = new Bar(-inputArray[i] * 10, STARTX + 50 * i, STARTY, initialColor);
         animationArray[i].draw();
     }
-    //console.log(animationArray);
+
     for (let i = 0; i < inputArray.length; ++i) {
 
         let index = i;
@@ -95,20 +159,29 @@ const selectionSort = async (inputArray) => {
         for (let j = i + 1; j < inputArray.length; ++j) {
             if (inputArray[j] < inputArray[index])
                 index = j;
+            delaySearchingForShortestBar(i, j);
+            timeAtWhichAnimationStarts += 450;
         }
 
-        if (i === index || i >= inputArray.length || index >= inputArray.length)
+        delayColoringTheBarsToBeSwapped(i, index);
+        timeAtWhichAnimationStarts += 500;
+
+        if (i >= inputArray.length || index >= inputArray.length)
             continue;
 
-        delay(i, index);
-        time += (Math.abs(i - index) * 1000 + 500);
-        const temp = inputArray[i];
-        inputArray[i] = inputArray[index];
-        inputArray[index] = temp;
-
+        delaySwappingAnimation(i, index);
+        timeAtWhichAnimationStarts += (Math.abs(i - index) * 1000 + 300);
+        [inputArray[i], inputArray[index]] = [inputArray[index], inputArray[i]];
     }
 
-    return inputArray;
+    setTimeout(() => {
+        c.clearRect(0, 0, canvas.width, canvas.height);
+        for (let bar of animationArray) {
+            if (bar.color === colorDuringSwappingAndSearching)
+                bar.color = finalColor;
+            bar.draw();
+        }
+    }, timeAtWhichAnimationStarts);
 }
 
-console.log(selectionSort([10, 35, 15, 5, 50, 45, 40, 30, 25, 20, 8]));
+selectionSort([6, 2, 4, 8, 5, 1, 10, 56, 34, 33, 22, 17]);
