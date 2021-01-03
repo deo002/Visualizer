@@ -1,50 +1,62 @@
 const canvas = document.querySelector('canvas');
-const WIDTH = 40, STARTX = 500, STARTY = 300, STARTYINTERMEDIATE = 600, YSPEED = 5, DELAY = 2000;
 const c = canvas.getContext('2d');
+
+const WIDTH = 60, STARTX = 500, STARTY = 300, STARTYINTERMEDIATE = 500, YSPEED = 5, DELAY = 2000;
+const colorWhileSwapping = '#f3ca20', initialColor = '#000';
+
+const animationArray = [];
+
+let timeAtWhichAnimationStarts = 0, finalDestinationX = null, xSpeed = null, curBar = null;
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+// event listener to resize the canvas as soon as window is resized
 window.addEventListener('resize', (event) => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 });
 
-inputArray = [6, 3, 6, 4, 8, 5, 2, 9];
+const inputArray = [6, 3, 6, 4, 8, 5, 2, 9];
 
-let timeAtWhichAnimationStarts = 0, finalDestinationX = null, xSpeed = null, curBar = null;
-
-const animationArray = [];
-
-class Bar { //class defined to construct bars representing numbers
-    constructor(height, x, y) {
-        this.height = height;
+// class defined to construct boxes representing numbers
+class Box {
+    constructor(x, y, color, text) {
         this.x = x;
         this.y = y;
+        this.color = color;
+        this.text = text;
     }
 
+    // draws boxes, numbers and shadow effects
     draw() {
-        c.fillStyle = 'pink';
-        c.fillRect(this.x, this.y, WIDTH, this.height);
+        c.fillStyle = this.color;
+        c.fillRect(this.x, this.y, WIDTH, -WIDTH);
 
-        c.fillStyle = "black";
+        c.fillStyle = "#fff";
 
-        c.fillText((-this.height) / 10, this.x + 11, this.y - 10);
-        c.font = '20px Calibri';
+        c.fillText(this.text, this.x + 20, this.y - 20);
+        c.font = '30px Calibri';
+
+        c.shadowBlur = 10;
+        c.shadowColor = "black";
 
     }
 }
 
+// utility function to sort animationArray according to the x-coordinates
 const sortAnimationArray = () => {
     animationArray.sort((a, b) => a.x - b.x);
 }
 
+// function to produce animation that takes the subarray boxes down to a temporary position
 function animateGoingDown() {
 
     const request = requestAnimationFrame(animateGoingDown);
 
     c.clearRect(0, 0, canvas.width, canvas.height);
 
+    // change x and y of boxes till they reach the intermediate designated position
     if (animationArray[curBar].y < STARTYINTERMEDIATE || Math.abs(animationArray[curBar].x - finalDestinationX) > 1) {
         if (animationArray[curBar].y < STARTYINTERMEDIATE) {
             animationArray[curBar].y += YSPEED;
@@ -65,6 +77,7 @@ function animateGoingDown() {
     }
 }
 
+// this function produces animation of subarray boxes going up
 function animateGoingUp() {
 
     const request = requestAnimationFrame(animateGoingUp);
@@ -72,7 +85,7 @@ function animateGoingUp() {
     c.clearRect(0, 0, canvas.width, canvas.height);
 
     let goesUp = false;
-    //console.log(animationArray);
+
     for (bar of animationArray) {
 
         if (bar.y > STARTY) {
@@ -85,11 +98,15 @@ function animateGoingUp() {
         cancelAnimationFrame(request);
 }
 
+//executing animations after a time delay so that they do not overlap
 const delayGoingDown = (cur, final) => {
     setTimeout(() => {
-        finalDestinationX = STARTX + 50 * final;
+        finalDestinationX = STARTX + 100 * final;
         curBar = cur;
+
+        // setting xSpeed in accordance to ySpeed so that final x and y coordinate is reached simultaneously
         xSpeed = Math.abs(finalDestinationX - animationArray[curBar].x) / (STARTYINTERMEDIATE - STARTY) * YSPEED;
+
         animateGoingDown();
 
     }, timeAtWhichAnimationStarts);
@@ -102,6 +119,7 @@ const delayGoingUp = () => {
     }, timeAtWhichAnimationStarts);
 }
 
+// merge helper of mergesort function
 const merge = (leftIndex, midIndex, rightIndex) => {
 
     const leftSize = midIndex - leftIndex + 1;
@@ -110,17 +128,26 @@ const merge = (leftIndex, midIndex, rightIndex) => {
     const left = inputArray.slice(leftIndex, midIndex + 1);
     const right = inputArray.slice(midIndex + 1, rightIndex + 1);
 
+    // setting the subarray being sorted to yellow
+    setTimeout(() => {
+        for (let i = leftIndex; i <= rightIndex; ++i) {
+            animationArray[i].color = colorWhileSwapping;
+        }
+    }, timeAtWhichAnimationStarts);
+    timeAtWhichAnimationStarts += 50;
 
     let i = 0, j = 0, k = leftIndex;
 
     while (i < leftSize && j < rightSize) {
         if (left[i] <= right[j]) {
             inputArray[k] = left[i];
+
+            // boxes go down to their designated positions
             delayGoingDown(i + leftIndex, k);
+
             timeAtWhichAnimationStarts += DELAY;
             ++i;
             ++k;
-            //if error happens first check time
         }
         else {
             inputArray[k] = right[j];
@@ -146,8 +173,20 @@ const merge = (leftIndex, midIndex, rightIndex) => {
         ++j;
         ++k;
     }
+
+    // after all the boxes have reached their designated positions move the subarray back to its position
     delayGoingUp();
     timeAtWhichAnimationStarts += DELAY;
+
+    // change color of subarray boxes back to black
+    setTimeout(() => {
+        for (let i = leftIndex; i <= rightIndex; ++i) {
+            animationArray[i].color = initialColor;
+        }
+        for (bar of animationArray)
+            bar.draw();
+    }, timeAtWhichAnimationStarts);
+    timeAtWhichAnimationStarts += 50;
 }
 
 const mergeSortHelper = (leftIndex, rightIndex) => {
@@ -164,7 +203,7 @@ const mergeSortHelper = (leftIndex, rightIndex) => {
 const mergeSort = () => {
 
     for (let i = 0; i < inputArray.length; ++i) {
-        animationArray[i] = new Bar(-inputArray[i] * 10, STARTX + 50 * i, STARTY);
+        animationArray[i] = new Box(STARTX + 100 * i, STARTY, initialColor, inputArray[i]);
         animationArray[i].draw();
     }
 
