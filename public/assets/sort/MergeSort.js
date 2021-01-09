@@ -30,7 +30,6 @@ class Box {
     draw() {
         c.fillStyle = this.color;
         c.fillRect(this.x, this.y, WIDTH, -WIDTH);
-
         c.fillStyle = "#fff";
 
         c.fillText(this.text, this.x + 20, this.y - 20);
@@ -125,6 +124,7 @@ function mergeSort(input) {
         animationArray[i].draw();
     }
 
+    //merge sort
     mergeSortHelper(0, inputArray.length - 1);
 }
 // utility function to sort animationArray according to the x-coordinates
