@@ -61,7 +61,7 @@ var algoSchema = new mongoose.Schema({
 
 var Algorithm = mongoose.model("Algorithm",algoSchema);
 
-/*var arr = [{name:"Selection Sort"}];
+/*var arr = [{name:"Selection Sort"},{name:"Bubble Sort"},{name:"Insertion Sort"},{name:"Merge Sort"},{name:"Quick Sort"}];
 
 arr.forEach(function(item){
   Algorithm.create(item,{ unique: true },function(err,algo){

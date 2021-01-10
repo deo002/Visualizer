@@ -74,7 +74,7 @@ function lastColor(){
             }
 }
 
-//algorithm for bubble sort
+//algorithm for selection sort
 function SelectionSort(input) {
     c.clearRect(0, 0, canvas.width, canvas.height);
     $("#slider").val(speed);
@@ -94,7 +94,7 @@ function SelectionSort(input) {
             if (inputArray[j] < inputArray[min])
                { min = j; }
         }
-        console.log(inputArray[min],inputArray[i]);
+        //console.log(inputArray[min],inputArray[i]);
         first.push(i);
         second.push(min);
         [inputArray[i], inputArray[min]] = [inputArray[min], inputArray[i]];
