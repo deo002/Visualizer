@@ -344,3 +344,9 @@ deleteButton.addEventListener('click', (event) => {
     deleteElement(textValue);
     deleteInput.value = "";
 });
+
+// no negative numbers allowed
+// insert index greater than length of linkedlist
+// delete request of index greater than current length of linkedlist
+// disable buttons while current animation is running
+// no input other than positive whole numbers allowed
