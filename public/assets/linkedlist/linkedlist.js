@@ -125,8 +125,10 @@ function animateGoingUp() {
 
         // adjusting the arrow of the element we are inserting
         elementToBeInserted.box.y -= YSPEED;
-        elementToBeInserted.arrow.fromY = elementToBeInserted.box.y - WIDTH / 2;
-        elementToBeInserted.arrow.toX = animationArray[index].box.x;
+        if (elementToBeInserted.arrow) {
+            elementToBeInserted.arrow.fromY = elementToBeInserted.box.y - WIDTH / 2;
+            elementToBeInserted.arrow.toX = animationArray[index].box.x;
+        }
         elementToBeInserted.draw();
 
         // adjusting the arrow of the element before the number we are inserting
@@ -162,7 +164,12 @@ function animateInsert() {
         timeAtWhichAnimationStarts += 500;
     }
 
-    if (index - 1 >= 0) {
+    setTimeout(() => {
+        if (index > 0 && index === animationArray.length)
+            animationArray[index - 1].arrow = new Arrow(STARTX + (index - 1) * SPACING + WIDTH / 2, STARTY - WIDTH / 2, STARTX + index * SPACING, STARTY + SPACING - WIDTH / 2);
+    }, timeAtWhichAnimationStarts);
+
+    if (index - 1 >= 0 && index !== animationArray.length) {
         setTimeout(adjustPointerInsert, timeAtWhichAnimationStarts);
         timeAtWhichAnimationStarts += 2500;
         setTimeout(animateGoingUp, timeAtWhichAnimationStarts);
@@ -267,6 +274,19 @@ function animateDelete() {
         }, timeAtWhichAnimationStarts);
         timeAtWhichAnimationStarts += 500;
     }
+    if (index === animationArray.length - 1) {
+        setTimeout(() => {
+            if (index > 0)
+                animationArray[index - 1].arrow = null;
+            animationArray.splice(index, 1);
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            for (element of animationArray) {
+                element.box.color = initialColor;
+                element.draw();
+            }
+        }, timeAtWhichAnimationStarts);
+        return;
+    }
 
     setTimeout(animateGoingDown, timeAtWhichAnimationStarts);
     timeAtWhichAnimationStarts += 2500;
@@ -295,23 +315,20 @@ function animateDelete() {
     }, timeAtWhichAnimationStarts);
 }
 
-const init = () => {
-    animationArray.push(new Element(new Box(STARTX, STARTY, initialColor, "/")));
-    animationArray[0].draw();
-    c.clearRect(0, 0, canvas.width, canvas.height);
-    animationArray[0].draw();
-}
-
-init();
-
 // insert function is called as soon as insert button is pressed
 const insert = (number, ind) => {
     index = parseInt(ind);
     timeAtWhichAnimationStarts = 0;
     const box = new Box(STARTX + index * SPACING, STARTY + SPACING, colorOfNodeBeingInserted, number);
-    const arrow = new Arrow(STARTX + index * SPACING + WIDTH / 2, STARTY + SPACING - WIDTH / 2, STARTX + index * SPACING, STARTY - WIDTH / 2);
-    const element = new Element(box, arrow);
-    elementToBeInserted = element;
+    if (index === animationArray.length) {
+        const element = new Element(box);
+        elementToBeInserted = element;
+    }
+    else {
+        const arrow = new Arrow(STARTX + index * SPACING + WIDTH / 2, STARTY + SPACING - WIDTH / 2, STARTX + index * SPACING, STARTY - WIDTH / 2);
+        const element = new Element(box, arrow);
+        elementToBeInserted = element;
+    }
     animateInsert();
 }
 
@@ -344,9 +361,3 @@ deleteButton.addEventListener('click', (event) => {
     deleteElement(textValue);
     deleteInput.value = "";
 });
-
-// no negative numbers allowed
-// insert index greater than length of linkedlist
-// delete request of index greater than current length of linkedlist
-// disable buttons while current animation is running
-// no input other than positive whole numbers allowed
