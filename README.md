@@ -4,3 +4,7 @@
 </section>
 <h3> npm install </h3>
 <h3> npm run dev </h3>
+
+## License
+Copyright 2020-2030 Visualizer
+Licensed under the GPLv3: http://www.gnu.org/licenses/gpl-3.0.html
