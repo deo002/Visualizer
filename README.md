@@ -7,4 +7,5 @@
 
 ## License
 Copyright 2020-2030 Visualizer
+<br>
 Licensed under the GPLv3: http://www.gnu.org/licenses/gpl-3.0.html
