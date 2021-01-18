@@ -1,12 +1,12 @@
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
 
-const STARTX = 500, STARTY = 300, WIDTH = 60, YSPEED = 1, XSPEED = 1, SPACING = 120;
+const STARTX = 500, STARTY = 300, WIDTH = 60, SPACING = 120;
 const initialColor = "#2a9d8f", colorOfNodeBeingInserted = "#e9c46a", colorOfNodesWhosePointerIsAdjusted = "#264653";
 
-const animationArray = [];
+let animationArray = [],isPlaying=false,speed=1,traverseSpeed=1,YSPEED = 1*speed, XSPEED = 1*speed,process="";
 
-let elementToBeInserted = null, index = null, timeAtWhichAnimationStarts = 0;
+let elementToBeInserted = null, index = null;
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -16,6 +16,8 @@ window.addEventListener('resize', (event) => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 });
+
+ $("#slider").val(speed);
 
 // class defined to construct arrows
 class Arrow {
@@ -84,28 +86,42 @@ class Element {
     }
 }
 
-// animation of adjusting pointers while inserting
-function adjustPointerInsert() {
-    const request = requestAnimationFrame(adjustPointerInsert);
+request =null,animate=null,timer=null;
 
-    c.clearRect(0, 0, canvas.width, canvas.height);
-
-    for (element of animationArray)
-        element.draw();
-
-    elementToBeInserted.draw();
-
-    if (animationArray[index - 1].arrow.toY < STARTY + SPACING - WIDTH / 2) {
-        animationArray[index - 1].arrow.toY += YSPEED;
-    }
-    else {
-        cancelAnimationFrame(request);
-    }
-}
+$("#slider").change(function(){
+    speed=Number($(this).val());
+    YSPEED = 1*speed, XSPEED = 1*speed;
+    if(speed>=0.1 && speed<=0.3)
+        {traverseSpeed=10;}
+    if(speed>=0.4 && speed<=0.6)
+        {traverseSpeed=5;}
+    if(speed>0.6 && speed<1)
+        {traverseSpeed=3;}
+    if(Math.floor(speed==1))
+        {traverseSpeed=1;}
+    if(Math.floor(speed==2))
+        {traverseSpeed=0.5;}
+    if(Math.floor(speed==3))
+        {traverseSpeed=0.4;}
+    if(Math.floor(speed==4))
+        {traverseSpeed=0.3;}
+    if(Math.floor(speed==5))
+        {traverseSpeed=0.1;}
+    if(timer){
+	    clearInterval(timer);
+	    if(process === 'Delete'){
+	        animateDelete();
+	    }
+	    else{
+	        animateInsert();
+	    }
+	}
+})
 
 // animation of insertion after adjusting pointers
 function animateGoingUp() {
-    const request = requestAnimationFrame(animateGoingUp);
+	animate = animateGoingUp;
+    request = requestAnimationFrame(animateGoingUp);
 
     c.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -133,6 +149,7 @@ function animateGoingUp() {
 
         // adjusting the arrow of the element before the number we are inserting
         if (index - 1 >= 0) {
+        	animationArray[index - 1].arrow.toY += YSPEED;
             animationArray[index - 1].arrow.toX = elementToBeInserted.box.x;
             animationArray[index - 1].arrow.toY = elementToBeInserted.box.y - WIDTH / 2;
         }
@@ -142,60 +159,55 @@ function animateGoingUp() {
         // insert element at correct position after the animation is complete because we are animating using index
         // and if we change it during animation, desired result wont be achieved
         animationArray.splice(index, 0, elementToBeInserted);
-        c.clearRect(0, 0, canvas.width, canvas.height);
-        for (let element of animationArray)
-            element.draw();
         cancelAnimationFrame(request);
+        for (element of animationArray)
+        	{element.box.color = initialColor;}
+
+    	c.clearRect(0, 0, canvas.width, canvas.height);
+
+    	for (element of animationArray)
+        	{element.draw();}
+
+    	elementToBeInserted = null;
+    	index = null;
+        isPlaying = false;
+        process = "";
     }
 }
 
 function animateInsert() {
-
     // animate traversing the linked list
-    for (let i = 0; i < index; ++i) {
-        setTimeout(() => {
-            if (i - 1 >= 0)
-                animationArray[i - 1].box.color = initialColor;
-            animationArray[i].box.color = colorOfNodesWhosePointerIsAdjusted;
-            c.clearRect(0, 0, canvas.width, canvas.height);
-            for (element of animationArray)
-                element.draw();
-        }, timeAtWhichAnimationStarts);
-        timeAtWhichAnimationStarts += 500;
-    }
+	let temp=0;
+	timer = setInterval(function(){
+	    c.clearRect(0, 0, canvas.width, canvas.height);
+	    if(index > 0){
+	    	if(temp - 1 >= 0)
+				{
+					animationArray[temp - 1].box.color = initialColor;
+				}
+			animationArray[temp].box.color = colorOfNodesWhosePointerIsAdjusted;
 
-    setTimeout(() => {
-        if (index > 0 && index === animationArray.length)
-            animationArray[index - 1].arrow = new Arrow(STARTX + (index - 1) * SPACING + WIDTH / 2, STARTY - WIDTH / 2, STARTX + index * SPACING, STARTY + SPACING - WIDTH / 2);
-    }, timeAtWhichAnimationStarts);
-
-    if (index - 1 >= 0 && index !== animationArray.length) {
-        setTimeout(adjustPointerInsert, timeAtWhichAnimationStarts);
-        timeAtWhichAnimationStarts += 2500;
-        setTimeout(animateGoingUp, timeAtWhichAnimationStarts);
-    }
-    else {
-        setTimeout(animateGoingUp, timeAtWhichAnimationStarts);
-    }
-    timeAtWhichAnimationStarts += 2500;
-    setTimeout(() => {
-        for (element of animationArray)
-            element.box.color = initialColor;
-
-        c.clearRect(0, 0, canvas.width, canvas.height);
-
-        for (element of animationArray)
-            element.draw();
-
-        elementToBeInserted = null;
-        index = null;
-
-    }, timeAtWhichAnimationStarts);
+	    }
+	    for (let i = 0; i < animationArray.length;i++) {
+	        animationArray[i].draw();
+	    }
+	    temp+=1;
+        request=null;
+        if(temp >= index)
+        {	clearInterval(timer);
+        	timer = null;
+			if (index > 0 && index === animationArray.length){
+			        animationArray[index - 1].arrow = new Arrow(STARTX + (index - 1) * SPACING + WIDTH / 2, STARTY - WIDTH / 2, STARTX + index * SPACING, STARTY + SPACING - WIDTH / 2);
+			    }
+			animateGoingUp();
+		}
+	}, (traverseSpeed*1000));
 }
 
 // animation of box to be deleted going down
 function animateGoingDown() {
-    const request = requestAnimationFrame(animateGoingDown);
+	animate = animateGoingDown;
+    request = requestAnimationFrame(animateGoingDown);
 
     c.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -210,15 +222,23 @@ function animateGoingDown() {
             animationArray[index - 1].arrow.toY += YSPEED;
     }
     else {
-        if (index - 1 < 0)
+        if (index - 1 < 0){
             animationArray.splice(index, 1);
+        }
         cancelAnimationFrame(request);
+        if (index - 1 >= 0) {
+        adjustPointerDelete();
+        }
+        else {
+        shiftBack();
+        }
     }
 }
 
 // animation of adjusting pointers while deleting
 function adjustPointerDelete() {
-    const request = requestAnimationFrame(adjustPointerDelete);
+	animate = adjustPointerDelete;
+    request = requestAnimationFrame(adjustPointerDelete);
 
     c.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -232,13 +252,14 @@ function adjustPointerDelete() {
     else {
         animationArray.splice(index, 1);
         cancelAnimationFrame(request);
+        shiftBack();
     }
 }
 
 // function to scale back the enlarged arrow to its normal size
 function shiftBack() {
-    const request = requestAnimationFrame(shiftBack);
-
+	animate = shiftBack;	
+    request = requestAnimationFrame(shiftBack);
     c.clearRect(0, 0, canvas.width, canvas.height);
 
     for (element of animationArray)
@@ -257,50 +278,6 @@ function shiftBack() {
     }
     else {
         cancelAnimationFrame(request);
-    }
-}
-
-function animateDelete() {
-
-    // animate traversing the linked list
-    for (let i = 0; i < index; ++i) {
-        setTimeout(() => {
-            if (i - 1 >= 0)
-                animationArray[i - 1].box.color = initialColor;
-            animationArray[i].box.color = colorOfNodesWhosePointerIsAdjusted;
-            c.clearRect(0, 0, canvas.width, canvas.height);
-            for (element of animationArray)
-                element.draw();
-        }, timeAtWhichAnimationStarts);
-        timeAtWhichAnimationStarts += 500;
-    }
-    if (index === animationArray.length - 1) {
-        setTimeout(() => {
-            if (index > 0)
-                animationArray[index - 1].arrow = null;
-            animationArray.splice(index, 1);
-            c.clearRect(0, 0, canvas.width, canvas.height);
-            for (element of animationArray) {
-                element.box.color = initialColor;
-                element.draw();
-            }
-        }, timeAtWhichAnimationStarts);
-        return;
-    }
-
-    setTimeout(animateGoingDown, timeAtWhichAnimationStarts);
-    timeAtWhichAnimationStarts += 2500;
-    if (index - 1 >= 0) {
-        setTimeout(adjustPointerDelete, timeAtWhichAnimationStarts);
-        timeAtWhichAnimationStarts += 2500;
-        setTimeout(shiftBack, timeAtWhichAnimationStarts);
-    }
-    else {
-        setTimeout(shiftBack, timeAtWhichAnimationStarts);
-    }
-
-    timeAtWhichAnimationStarts += 2500;
-    setTimeout(() => {
         for (element of animationArray)
             element.box.color = initialColor;
 
@@ -311,14 +288,61 @@ function animateDelete() {
 
         elementToBeInserted = null;
         index = null;
+        isPlaying = false;
+        process = "";
+    }
+}
 
-    }, timeAtWhichAnimationStarts);
+function animateDelete() {
+
+    // animate traversing the linked list
+	let temp=0;
+	timer = setInterval(function(){
+	    c.clearRect(0, 0, canvas.width, canvas.height);
+	    if(index > 0){
+	    	if(temp - 1 >= 0)
+				{
+					animationArray[temp - 1].box.color = initialColor;
+				}
+			animationArray[temp].box.color = colorOfNodesWhosePointerIsAdjusted;
+
+	    }
+	    for (let i = 0; i < animationArray.length;i++) {
+	        animationArray[i].draw();
+	    }
+	    temp+=1;
+        request=null;
+        if(temp >= index)
+        {	clearInterval(timer);
+        	timer = null;
+                animationArray[index].box.color = colorOfNodeBeingInserted;
+                c.clearRect(0, 0, canvas.width, canvas.height);
+                for (element of animationArray) {
+                    element.draw();
+                }
+			    if (index === animationArray.length - 1) {
+			            if (index > 0){
+			                animationArray[index - 1].arrow = null;
+			            }
+			            animationArray.splice(index, 1);
+                        isPlaying =false;
+			            c.clearRect(0, 0, canvas.width, canvas.height);
+			            for (element of animationArray) {
+			                element.box.color = initialColor;
+			                element.draw();
+			            }
+			    }
+			    else {
+			    	animateGoingDown();
+			    }
+		}
+		
+	}, (traverseSpeed*1000));
 }
 
 // insert function is called as soon as insert button is pressed
 const insert = (number, ind) => {
     index = parseInt(ind);
-    timeAtWhichAnimationStarts = 0;
     const box = new Box(STARTX + index * SPACING, STARTY + SPACING, colorOfNodeBeingInserted, number);
     if (index === animationArray.length) {
         const element = new Element(box);
@@ -329,13 +353,16 @@ const insert = (number, ind) => {
         const element = new Element(box, arrow);
         elementToBeInserted = element;
     }
+    isPlaying=true;
+    process = "Insert";
     animateInsert();
 }
 
 // deleteElement function is called as soon as delete button is pressed
 const deleteElement = (ind) => {
     index = parseInt(ind);
-    timeAtWhichAnimationStarts = 0;
+    isPlaying=true;
+    process = "Delete";
     animateDelete();
 }
 
@@ -344,20 +371,97 @@ const insertButton = document.querySelector("#insert");
 const indexInput = document.querySelector("#index");
 
 insertButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    const textValue = insertInput.value;
-    const textIndex = indexInput.value;
-    insert(textValue, textIndex);
-    insertInput.value = "";
-    indexInput.value = "";
+	if(isPlaying == false){
+	    event.preventDefault();
+	    const textValue = insertInput.value;
+	    const textIndex = indexInput.value;
+	    if(textIndex > animationArray.length || textIndex < 0)
+	    	{ $('.alert').html(textIndex + " is an Invaild Index!");
+	    	  $('.alert').addClass('show');
+	    	  setTimeout(function(){ 
+	    	  	$('.alert').removeClass('show');
+	    	  	$('.alert').html("");
+	    	  }, 2500);
+	    	}
+	    else {
+	    	if(textValue!="" && textIndex!="")
+		    	{insert(textValue, textIndex);}
+		}
+	}
+	else {
+	$('.alert').html(process + " is in  progress!");
+	$('.alert').addClass('show');
+	setTimeout(function(){ 
+	    $('.alert').removeClass('show');
+	    $('.alert').html("");
+	}, 2500);
+	}
+	insertInput.value = "";
+	indexInput.value = "";
 });
 
 const deleteInput = document.querySelector("#indexDelete");
 const deleteButton = document.querySelector("#delete");
 
 deleteButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    const textValue = deleteInput.value;
-    deleteElement(textValue);
-    deleteInput.value = "";
+	if(isPlaying === false){
+	    event.preventDefault();
+	    const textValue = deleteInput.value;
+	    if(textValue > animationArray.length || textValue < 0)
+	    	{ $('.alert').html(textValue + " is an Invaild Index!");
+	    	  $('.alert').addClass('show');
+	    	  setTimeout(function(){ 
+	    	  	$('.alert').removeClass('show');
+	    	  	$('.alert').html("");
+	    	  }, 2500);
+	    	}
+	    else {
+	    	if(textValue!="")
+		    	{deleteElement(textValue);}
+		}
+	}
+	else {
+    	$('.alert').html(process + " is in  progress!");
+    	$('.alert').addClass('show');
+    	setTimeout(function(){ 
+    	    $('.alert').removeClass('show');
+    	    $('.alert').html("");
+    	}, 2500);		
+	}
+	deleteInput.value = "";
 });
+
+$('#stop').click(function(){
+        if(isPlaying === true)
+          { if(request != null){
+                cancelAnimationFrame(request);
+            }
+            else
+                {clearInterval(timer);}
+           $(this).html("Play"); 
+           isPlaying = false;
+           }
+        else
+          { if($(this).html()=="Play"){
+               if(request!=null){
+                    requestAnimationFrame(animate);
+                }
+                else
+                { if(process === 'Delete'){
+                	animateDelete();}
+                  else{
+                  	animateInsert();
+                  }
+
+                }
+               $(this).html("Stop");
+               $(this).css("Stop"); 
+               isPlaying=true;
+            }
+         }
+   })
+
+$('#reset').click(function(){
+    speed=1;
+    $("#slider").val(speed);
+   })
