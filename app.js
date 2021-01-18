@@ -61,7 +61,7 @@ var algoSchema = new mongoose.Schema({
 
 var Algorithm = mongoose.model("Algorithm",algoSchema);
 
-/*var arr = [{name:"Selection Sort"},{name:"Bubble Sort"},{name:"Insertion Sort"},{name:"Merge Sort"},{name:"Quick Sort"}];
+/*var arr = [{name:"Linked List"},{name:"Double Linked List"},{name:"Stack"},{name:"Queue"}];
 
 arr.forEach(function(item){
   Algorithm.create(item,{ unique: true },function(err,algo){
@@ -136,7 +136,7 @@ app.get("/Visualizers/:name",function(req,res){
     {console.log(err);}
   else
     {console.log(foundAlgo[0].comments)
-     res.render("visualizers/"+ req.params.name,{algo:foundAlgo[0]});
+     res.render("visualizers/algo/"+ req.params.name,{algo:foundAlgo[0]});
      }
    });
 });

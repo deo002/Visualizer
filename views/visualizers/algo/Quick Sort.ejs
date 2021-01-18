@@ -1,6 +1,6 @@
-<%- include ('./show_partials/header') %>
+<%- include ('../show_partials/header') %>
 <section style="margin-top:12px;">
-     <nav class="navbar navbar-light bg-light">
+      <nav class="navbar navbar-light bg-light">
         <div class="container">
           	<div class="d-flex">
             	<input  id="input" class="form-control mr-2" type="input" placeholder="Array[1,2,3]" aria-label="input">
@@ -56,7 +56,7 @@
                       <li class="list-group-item">
                         <p>
                           <i class="fas fa-user"></i>
-                          <a href="/users/<%= comment.author.id %>">
+                          <a href="">
                             <%= comment.author.username %>
                           </a>
                           <span class="float-right text-muted">
@@ -161,5 +161,5 @@
         </p>
       </div>
 </div>
-<script src="../assets/sort/BubbleSort.js"></script>
-<%- include ('./show_partials/footer') %>
+<script src="../assets/sort/QuickSort.js"></script>
+<%- include ('../show_partials/footer') %>
