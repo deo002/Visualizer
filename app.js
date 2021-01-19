@@ -315,7 +315,7 @@ app.get("/about",function(req,res){
 });
 
 app.get("/site-map",function(req,res){
-  res.render("sitemap.xml");
+  res.sendFile(__dirname + "/sitemap.xml");
 });
 
 app.get("*",function(req,res){
