@@ -314,6 +314,10 @@ app.get("/about",function(req,res){
   res.render("about");
 });
 
+app.get("/site-map",function(req,res){
+  res.render("sitemap.xml");
+});
+
 app.get("*",function(req,res){
   res.render("error");
 });
