@@ -1,82 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
-
+		<!--	created with www.mysitemapgenerator.com	-->
+		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-  <loc>https://visualizer-69.herokuapp.com/</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>1.00</priority>
+	<loc>http://visualizer-69.herokuapp.com/</loc>
+	<lastmod>2021-01-19T19:40:35+01:00</lastmod>
+	<priority>1.0</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/Visualizers</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.80</priority>
+	<loc>http://visualizer-69.herokuapp.com/Visualizers</loc>
+	<lastmod>2021-01-19T19:40:35+01:00</lastmod>
+	<priority>1.0</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/about</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.80</priority>
+	<loc>http://visualizer-69.herokuapp.com/about</loc>
+	<lastmod>2021-01-19T19:40:36+01:00</lastmod>
+	<priority>1.0</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/login</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.80</priority>
+	<loc>http://visualizer-69.herokuapp.com/login</loc>
+	<lastmod>2021-01-19T19:40:36+01:00</lastmod>
+	<priority>1.0</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/signup</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.80</priority>
+	<loc>http://visualizer-69.herokuapp.com/signup</loc>
+	<lastmod>2021-01-19T19:40:36+01:00</lastmod>
+	<priority>1.0</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/Visualizers/Selection%20Sort</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.64</priority>
+	<loc>http://visualizer-69.herokuapp.com/Visualizers/Selection%20Sort</loc>
+	<lastmod>2021-01-19T19:40:36+01:00</lastmod>
+	<priority>0.8</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/Visualizers/Bubble%20Sort</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.64</priority>
+	<loc>http://visualizer-69.herokuapp.com/Visualizers/Bubble%20Sort</loc>
+	<lastmod>2021-01-19T19:40:37+01:00</lastmod>
+	<priority>0.8</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/Visualizers/Insertion%20Sort</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.64</priority>
+	<loc>http://visualizer-69.herokuapp.com/Visualizers/Insertion%20Sort</loc>
+	<lastmod>2021-01-19T19:40:37+01:00</lastmod>
+	<priority>0.8</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/Visualizers/Quick%20Sort</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.64</priority>
+	<loc>http://visualizer-69.herokuapp.com/Visualizers/Quick%20Sort</loc>
+	<lastmod>2021-01-19T19:40:38+01:00</lastmod>
+	<priority>0.8</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/Visualizers/Merge%20Sort</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.64</priority>
+	<loc>http://visualizer-69.herokuapp.com/Visualizers/Merge%20Sort</loc>
+	<lastmod>2021-01-19T19:40:38+01:00</lastmod>
+	<priority>0.8</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/Visualizers/Linked%20List</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.64</priority>
+	<loc>http://visualizer-69.herokuapp.com/Visualizers/Linked%20List</loc>
+	<lastmod>2021-01-19T19:40:38+01:00</lastmod>
+	<priority>0.8</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/Visualizers/Double%20Linked%20List</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.64</priority>
+	<loc>http://visualizer-69.herokuapp.com/Visualizers/Double%20Linked%20List</loc>
+	<lastmod>2021-01-19T19:40:38+01:00</lastmod>
+	<priority>0.8</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/Visualizers/Stack</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.64</priority>
+	<loc>http://visualizer-69.herokuapp.com/Visualizers/Stack</loc>
+	<lastmod>2021-01-19T19:40:39+01:00</lastmod>
+	<priority>0.8</priority>
 </url>
 <url>
-  <loc>https://visualizer-69.herokuapp.com/Visualizers/Queue</loc>
-  <lastmod>2021-01-19T08:37:20+00:00</lastmod>
-  <priority>0.64</priority>
+	<loc>http://visualizer-69.herokuapp.com/Visualizers/Queue</loc>
+	<lastmod>2021-01-19T19:40:39+01:00</lastmod>
+	<priority>0.8</priority>
 </url>
-
-
 </urlset>
